@@ -511,6 +511,74 @@ public class Picture extends SimplePicture
     }
   }
   
+  /** Method to make a black and white picture 
+    * @param edgeDist the distance for finding edges
+    */
+  public Picture edgeDetectionBelow(int threshold)
+  {
+    Pixel upPixel = null;
+    Pixel downPixel = null;
+    Pixel[][] pixels = this.getPixels2D();
+    Picture result = new Picture(pixels.length, pixels[0].length);
+    Pixel[][] resultPixels = result.getPixels2D();
+
+    Color downColor = null;
+    for (int row = 0; row < pixels.length - 1; row++){
+      for (int col = 0; col < pixels[0].length; col++){
+        upPixel = pixels[row][col];
+        downPixel = pixels[row+1][col];
+        downColor = downPixel.getColor();
+        if (upPixel.colorDistance(downColor) > threshold)
+          resultPixels[row][col].setColor(Color.BLACK);
+        else
+          resultPixels[row][col].setColor(Color.WHITE);
+      }
+    }
+    
+    return result;
+  }
+  
+  public Picture greenScreen(){
+	  Pixel[][] pixels = this.getPixels2D();
+	  Picture result = new Picture(pixels.length, pixels[0].length);
+	  Pixel[][] resultPixels = result.getPixels2D();
+	  
+	  for(int row = 0; row < pixels.length; row++){
+		  for(int col = 0; col < pixels[0].length; col++){
+			  resultPixels[row][col].setColor(pixels[row][col].getColor());
+		  }
+	  }
+	  
+
+	  Picture oldGreen1 = new Picture("GreenScreenCatMouse/kitten1GreenScreen.jpg");
+	  Pixel[][] oldGreenPixels1 = oldGreen1.getPixels2D();
+	  Picture oldGreen2 = new Picture("GreenScreenCatMouse/mouse1GreenScreen.jpg");
+	  Pixel[][] oldGreenPixels2 = oldGreen2.getPixels2D();
+
+	  
+	  for(int row = 0; row < oldGreenPixels1.length; row++){
+		  for(int col = 0; col < oldGreenPixels1[0].length; col++){
+			  Pixel current = oldGreenPixels1[row][col];
+			  if(current.colorDistance(new Color(51,204,51)) > 100){
+				  resultPixels[row+150][col+350].setColor(oldGreenPixels1[row][col].getColor());
+			  }
+		  }
+	  }
+	  
+	  for(int row = 0; row < oldGreenPixels2.length; row++){
+		  for(int col = 0; col < oldGreenPixels2[0].length; col++){
+			  Pixel current = oldGreenPixels2[row][col];
+			  if(current.colorDistance(new Color(51,204,51)) > 100){
+				  System.out.println(current);
+				  resultPixels[row+350][col].setColor(oldGreenPixels2[row][col].getColor());
+			  }
+		  }
+	  }
+	  
+	  return result;
+
+  }
+  
   
   /* Main method for testing - each class in Java can have a main 
    * method 
